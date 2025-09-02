@@ -119,192 +119,191 @@
                }
                 else
                 {
- 121                   //Skip this appointment
- 122                   continue;
- 123               }
- 124   
-125           }
- 126   
-127           return appointmentUIDs;
- 128       }
- 129   
-130       public static async Task<bool> UpdateAppointmentEndTimeAsync(
- 131           string userEmail,
- 132           string appointmentUID,
- 133           DateTime newEndTime)
- 134       {
- 135           var accessToken = await GetAccessTokenAsync();
- 136   
-137           using var httpClient = new HttpClient();
- 138           httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", accessToken);
- 139   
-140           var url = $"https://graph.microsoft.com/v1.0/users/{userEmail}/events/{appointmentUID}";
- 141   
-142           // Prepare the PATCH payload
- 143           var updatePayload = new
- 144           {
- 145               end = new
- 146               {
- 147                   dateTime = newEndTime.ToString("o"), // ISO 8601 format
- 148                   timeZone = "UTC"
- 149               }
- 150           };
- 151   
-152           var content = new StringContent(JsonSerializer.Serialize(updatePayload), Encoding.UTF8, "application/json");
- 153           var method = new HttpMethod("PATCH");
- 154           var request = new HttpRequestMessage(method, url) { Content = content };
- 155   
-156           var response = await httpClient.SendAsync(request);
- 157   
-158           if (response.IsSuccessStatusCode)
- 159           {
- 160               Console.WriteLine("Appointment end time updated successfully.");
- 161               return true;
- 162           }
- 163           else
- 164           {
- 165               var errorDetails = await response.Content.ReadAsStringAsync();
- 166               Console.WriteLine($"Failed to update appointment. Status code: {response.StatusCode}, Error: {errorDetails}");
- 167               return false;
- 168           }
- 169       }
- 170   
-171   
-172       public static async Task DeleteAppointmentAsync(string userEmail, string appointmentUID)
- 173       {
- 174           var accessToken = await GetAccessTokenAsync();
- 175   
-176           using var httpClient = new HttpClient();
- 177           httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", accessToken);
- 178   
-179           var url = $"https://graph.microsoft.com/v1.0/users/{userEmail}/events/{appointmentUID}";
-180   
-181           var response = await httpClient.DeleteAsync(url);
- 182   
-183           if (response.IsSuccessStatusCode)
- 184           {
- 185               Console.WriteLine("Appointment deleted successfully.");
- 186           }
- 187           else
- 188           {
- 189               Console.WriteLine($"Failed to delete appointment. Status code: {response.StatusCode}");
- 190               var errorDetails = await response.Content.ReadAsStringAsync();
- 191               Console.WriteLine($"Error details: {errorDetails}");
- 192           }
- 193       }
- 194   
-195       public static async Task SetAppointmentToFreeAsync(string userEmail, string appointmentUID)
- 196       {
- 197           Console.WriteLine($"Setting appointment with UID: {appointmentUID} to free time for user: {userEmail}");
- 198   
-199           try
- 200           {
- 201               var accessToken = await GetAccessTokenAsync();
- 202   
-203               using var httpClient = new HttpClient();
- 204               httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", accessToken);
- 205               httpClient.DefaultRequestHeaders.Add("Prefer", "outlook.suppress-notifications");
- 206   
-207               var url = $"https://graph.microsoft.com/v1.0/users/{userEmail}/events/{appointmentUID}" ;
- 208   
-209               // Update the event's showAs property to "free"
- 210               var updateEvent = new
- 211               {
- 212                   showAs = "free"
- 213               };
- 214   
-215               var content = new StringContent(JsonSerializer.Serialize(updateEvent), Encoding.UTF8, "application/json");
- 216               var response = await httpClient.PatchAsync(url, content);
- 217   
-218               if (response.IsSuccessStatusCode)
- 219               {
- 220                   Console.WriteLine($"Successfully set appointment with UID: {appointmentUID} to free time.");
- 221               }
- 222               else
- 223               {
- 224                   var errorDetails = await response.Content.ReadAsStringAsync();
- 225                   Console.WriteLine($"Failed to set appointment to free time. Status code: {response.StatusCode}, Error: {errorDetails}");
- 226               }
- 227           }
- 228           catch (Exception ex)
- 229           {
- 230               Console.WriteLine($"Unexpected error while setting appointment to free time. Error: {ex.Message}");
- 231           }
- 232       }
- 233   
-234       public static async Task DownloadCsvsAndCombineAsync(
- 235           string connectionString,
- 236           string containerName,
- 237           DateTime targetDate,
-238           string outputDirectory,
- 239           string outputFileNamePrefix)
- 240       {
- 241           var blobServiceClient = new BlobServiceClient(connectionString);
- 242           var containerClient = blobServiceClient.GetBlobContainerClient(containerName);
- 243   
-244           // List blobs for the given day
- 245           var blobs = new List<BlobItem>();
- 246           await foreach (var blobItem in containerClient.GetBlobsAsync())
- 247           {
- 248               Console.WriteLine($"Blob Name: {blobItem.Name}, Last Modified: {blobItem.Properties.LastModified.Value.ToLocalTime().Date}");
- 249               if (blobItem.Name.EndsWith(".csv", StringComparison.OrdinalIgnoreCase) &&
- 250                   blobItem.Properties.LastModified.HasValue &&
- 251                   blobItem.Properties.LastModified.Value.ToLocalTime().Date == targetDate.Date)
- 252               {
- 253                   blobs.Add(blobItem);
- 254               }
- 255           }
- 256   
-257           var outputFilePath = Path.Combine(
- 258               outputDirectory,
- 259               $"{outputFileNamePrefix} {targetDate:yyyy-MM-dd}.csv"
- 260           );
- 261   
-262           // Explicitly delete the file if it exists
- 263           if (File.Exists(outputFilePath))
- 264           {
- 265               File.Delete(outputFilePath);
- 266           }
- 267   
-268           using (var writer = new StreamWriter(outputFilePath, false, Encoding.UTF8))
- 269           {
- 270               bool headerWritten = false;
- 271   
-272               if (blobs.Count == 0)
- 273               {
- 274                   Console.WriteLine("No CSV files found for the given date.");
- 275                   await writer.WriteLineAsync(CsvHeader);
- 276               }
- 277               else
- 278               {
- 279                   foreach (var blob in blobs)
- 280                   {
- 281                       var blobClient = containerClient.GetBlobClient(blob.Name);
- 282                       using (var stream = await blobClient.OpenReadAsync())
- 283                       using (var reader = new StreamReader(stream))
- 284                       {
- 285                           string? headerLine = await reader.ReadLineAsync();
- 286   
-287                           if (!headerWritten && headerLine != null)
- 288                           {
- 289                               await writer.WriteLineAsync(headerLine);
- 290                               headerWritten = true;
- 291                           }
- 292   
-293                           // Write the rest of the lines (data rows)
- 294                           while (!reader.EndOfStream)
- 295                           {
- 296                               var line = await reader.ReadLineAsync();
- 297                               if (!string.IsNullOrWhiteSpace(line))
- 298                               {
- 299                                   await writer.WriteLineAsync(line);
- 300                               }
- 301                           }
- 302                       }
- 303                   }
- 304               }
-305           }
- 306           Console.WriteLine($"Combined CSV saved to: {outputFilePath}");
- 307       }
- 308   }
- 309   
+                   //Skip this appointment
+                   continue;
+               }
+   
+          }
+   
+          return appointmentUIDs;
+       }
+   
+      public static async Task<bool> UpdateAppointmentEndTimeAsync(
+           string userEmail,
+           string appointmentUID,
+           DateTime newEndTime)
+       {
+           var accessToken = await GetAccessTokenAsync();
+   
+          using var httpClient = new HttpClient();
+           httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", accessToken);
+   
+          var url = $"https://graph.microsoft.com/v1.0/users/{userEmail}/events/{appointmentUID}";
+   
+          // Prepare the PATCH payload
+           var updatePayload = new
+           {
+               end = new
+               {
+                   dateTime = newEndTime.ToString("o"), // ISO 8601 format
+                   timeZone = "UTC"
+               }
+           };
+   
+          var content = new StringContent(JsonSerializer.Serialize(updatePayload), Encoding.UTF8, "application/json");
+           var method = new HttpMethod("PATCH");
+           var request = new HttpRequestMessage(method, url) { Content = content };
+   
+          var response = await httpClient.SendAsync(request);
+   
+          if (response.IsSuccessStatusCode)
+           {
+               Console.WriteLine("Appointment end time updated successfully.");
+               return true;
+           }
+           else
+           {
+               var errorDetails = await response.Content.ReadAsStringAsync();
+               Console.WriteLine($"Failed to update appointment. Status code: {response.StatusCode}, Error: {errorDetails}");
+               return false;
+           }
+       }
+   
+  
+      public static async Task DeleteAppointmentAsync(string userEmail, string appointmentUID)
+       {
+           var accessToken = await GetAccessTokenAsync();
+   
+          using var httpClient = new HttpClient();
+           httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", accessToken);
+   
+          var url = $"https://graph.microsoft.com/v1.0/users/{userEmail}/events/{appointmentUID}";
+  
+          var response = await httpClient.DeleteAsync(url);
+   
+          if (response.IsSuccessStatusCode)
+           {
+               Console.WriteLine("Appointment deleted successfully.");
+           }
+           else
+           {
+               Console.WriteLine($"Failed to delete appointment. Status code: {response.StatusCode}");
+               var errorDetails = await response.Content.ReadAsStringAsync();
+               Console.WriteLine($"Error details: {errorDetails}");
+           }
+       }
+   
+      public static async Task SetAppointmentToFreeAsync(string userEmail, string appointmentUID)
+       {
+           Console.WriteLine($"Setting appointment with UID: {appointmentUID} to free time for user: {userEmail}");
+   
+          try
+           {
+               var accessToken = await GetAccessTokenAsync();
+   
+              using var httpClient = new HttpClient();
+               httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", accessToken);
+               httpClient.DefaultRequestHeaders.Add("Prefer", "outlook.suppress-notifications");
+   
+              var url = $"https://graph.microsoft.com/v1.0/users/{userEmail}/events/{appointmentUID}" ;
+   
+              // Update the event's showAs property to "free"
+               var updateEvent = new
+               {
+                   showAs = "free"
+               };
+   
+              var content = new StringContent(JsonSerializer.Serialize(updateEvent), Encoding.UTF8, "application/json");
+               var response = await httpClient.PatchAsync(url, content);
+   
+              if (response.IsSuccessStatusCode)
+               {
+                   Console.WriteLine($"Successfully set appointment with UID: {appointmentUID} to free time.");
+               }
+               else
+               {
+                   var errorDetails = await response.Content.ReadAsStringAsync();
+                   Console.WriteLine($"Failed to set appointment to free time. Status code: {response.StatusCode}, Error: {errorDetails}");
+               }
+           }
+           catch (Exception ex)
+           {
+               Console.WriteLine($"Unexpected error while setting appointment to free time. Error: {ex.Message}");
+           }
+       }
+   
+      public static async Task DownloadCsvsAndCombineAsync(
+           string connectionString,
+           string containerName,
+           DateTime targetDate,
+          string outputDirectory,
+           string outputFileNamePrefix)
+       {
+           var blobServiceClient = new BlobServiceClient(connectionString);
+           var containerClient = blobServiceClient.GetBlobContainerClient(containerName);
+   
+          // List blobs for the given day
+           var blobs = new List<BlobItem>();
+           await foreach (var blobItem in containerClient.GetBlobsAsync())
+           {
+               Console.WriteLine($"Blob Name: {blobItem.Name}, Last Modified: {blobItem.Properties.LastModified.Value.ToLocalTime().Date}");
+               if (blobItem.Name.EndsWith(".csv", StringComparison.OrdinalIgnoreCase) &&
+                   blobItem.Properties.LastModified.HasValue &&
+                   blobItem.Properties.LastModified.Value.ToLocalTime().Date == targetDate.Date)
+               {
+                   blobs.Add(blobItem);
+               }
+           }
+   
+          var outputFilePath = Path.Combine(
+               outputDirectory,
+               $"{outputFileNamePrefix} {targetDate:yyyy-MM-dd}.csv"
+           );
+   
+          // Explicitly delete the file if it exists
+           if (File.Exists(outputFilePath))
+           {
+               File.Delete(outputFilePath);
+           }
+   
+          using (var writer = new StreamWriter(outputFilePath, false, Encoding.UTF8))
+           {
+              bool headerWritten = false;
+   
+              if (blobs.Count == 0)
+               {
+                   Console.WriteLine("No CSV files found for the given date.");
+                   await writer.WriteLineAsync(CsvHeader);
+               }
+               else
+               {
+                   foreach (var blob in blobs)
+                   {
+                       var blobClient = containerClient.GetBlobClient(blob.Name);
+                       using (var stream = await blobClient.OpenReadAsync())
+                       using (var reader = new StreamReader(stream))
+                       {
+                           string? headerLine = await reader.ReadLineAsync();
+   
+                          if (!headerWritten && headerLine != null)
+                           {
+                               await writer.WriteLineAsync(headerLine);
+                               headerWritten = true;
+                           }
+   
+                          // Write the rest of the lines (data rows)
+                           while (!reader.EndOfStream)
+                           {
+                               var line = await reader.ReadLineAsync();
+                               if (!string.IsNullOrWhiteSpace(line))
+                               {
+                                   await writer.WriteLineAsync(line);
+                               }
+                           }
+                       }
+                   }
+               }
+          }
+           Console.WriteLine($"Combined CSV saved to: {outputFilePath}");
+       }
+   } 
