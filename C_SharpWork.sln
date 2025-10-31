@@ -1,0 +1,29 @@
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.5.2.0
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "tests", "tests", "{0AB3BF05-4346-4AA6-1389-037BE0695223}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FindMissingAppointments.Tests", "tests\FindMissingAppointments.Tests\FindMissingAppointments.Tests.csproj", "{EBC8CF42-FEF0-827E-1FFE-C93C61821DAE}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{EBC8CF42-FEF0-827E-1FFE-C93C61821DAE}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{EBC8CF42-FEF0-827E-1FFE-C93C61821DAE}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{EBC8CF42-FEF0-827E-1FFE-C93C61821DAE}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{EBC8CF42-FEF0-827E-1FFE-C93C61821DAE}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(NestedProjects) = preSolution
+		{EBC8CF42-FEF0-827E-1FFE-C93C61821DAE} = {0AB3BF05-4346-4AA6-1389-037BE0695223}
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {F46556C8-A412-42AB-8DC3-3A7E400644AE}
+	EndGlobalSection
+EndGlobal

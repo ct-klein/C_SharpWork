@@ -1,0 +1,5 @@
+C:\Users\ct_kl\CSharp_Work\C_SharpWork\tests\FindMissingAppointments.Tests\obj\Debug\net6.0\FindMissingAppointments.Tests.csproj.AssemblyReference.cache
+C:\Users\ct_kl\CSharp_Work\C_SharpWork\tests\FindMissingAppointments.Tests\obj\Debug\net6.0\FindMissingAppointments.Tests.GeneratedMSBuildEditorConfig.editorconfig
+C:\Users\ct_kl\CSharp_Work\C_SharpWork\tests\FindMissingAppointments.Tests\obj\Debug\net6.0\FindMissingAppointments.Tests.AssemblyInfoInputs.cache
+C:\Users\ct_kl\CSharp_Work\C_SharpWork\tests\FindMissingAppointments.Tests\obj\Debug\net6.0\FindMissingAppointments.Tests.AssemblyInfo.cs
+C:\Users\ct_kl\CSharp_Work\C_SharpWork\tests\FindMissingAppointments.Tests\obj\Debug\net6.0\FindMissingAppointments.Tests.csproj.CoreCompileInputs.cache

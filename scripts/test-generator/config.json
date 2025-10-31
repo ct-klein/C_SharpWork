@@ -1,0 +1,81 @@
+{
+  "testGenerator": {
+    "version": "1.0.0",
+    "description": "Automated unit test generator for C# projects",
+    "framework": "xUnit",
+    "mockingLibrary": "Moq",
+    "assertionLibrary": "FluentAssertions",
+    "targetFramework": "net6.0",
+    "testProjectSuffix": ".Tests",
+    "testDirectory": "tests",
+    "coverageThreshold": 80,
+    "agents": {
+      "codeAnalyzer": {
+        "name": "code-analyzer",
+        "description": "Analyzes C# code to identify classes, methods, and dependencies",
+        "tasks": [
+          "Parse source files",
+          "Extract public/private methods",
+          "Identify dependencies",
+          "Detect patterns (static, async, etc.)",
+          "Generate code metadata"
+        ]
+      },
+      "testGenerator": {
+        "name": "tester",
+        "description": "Generates comprehensive unit tests based on code analysis",
+        "tasks": [
+          "Create test project structure",
+          "Generate test classes",
+          "Write test methods",
+          "Add edge cases",
+          "Create mocks for dependencies"
+        ]
+      },
+      "reviewer": {
+        "name": "reviewer",
+        "description": "Reviews generated tests for completeness and quality",
+        "tasks": [
+          "Check code coverage",
+          "Validate test patterns",
+          "Ensure proper assertions",
+          "Review edge cases",
+          "Suggest improvements"
+        ]
+      }
+    },
+    "testPatterns": {
+      "publicMethods": {
+        "enabled": true,
+        "includeAsync": true,
+        "includeStatic": true
+      },
+      "privateMethods": {
+        "enabled": true,
+        "useReflection": true
+      },
+      "properties": {
+        "enabled": true,
+        "testGetters": true,
+        "testSetters": true
+      },
+      "constructors": {
+        "enabled": true,
+        "testParameterValidation": true
+      },
+      "edgeCases": {
+        "nullParameters": true,
+        "emptyStrings": true,
+        "boundaryValues": true,
+        "exceptions": true,
+        "unicodeAndSpecialChars": true
+      }
+    },
+    "output": {
+      "generateReadme": true,
+      "includeCodeCoverage": true,
+      "generateCIConfig": true,
+      "documentTestCases": true
+    }
+  }
+}

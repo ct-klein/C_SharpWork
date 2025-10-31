@@ -1,0 +1,26 @@
+{
+  "name": "csharp-test-generator",
+  "version": "1.0.0",
+  "description": "Automated unit test generator for C# projects using Claude Flow agents",
+  "main": "generate-tests.js",
+  "scripts": {
+    "generate": "node generate-tests.js",
+    "test": "echo \"Run dotnet test in your test projects\"",
+    "watch": "node generate-tests.js --watch"
+  },
+  "bin": {
+    "generate-csharp-tests": "./generate-tests.js"
+  },
+  "keywords": [
+    "csharp",
+    "unit-testing",
+    "test-generation",
+    "automation",
+    "claude",
+    "ai"
+  ],
+  "author": "",
+  "license": "MIT",
+  "dependencies": {},
+  "devDependencies": {}
+}
