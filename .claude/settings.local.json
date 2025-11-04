@@ -3,7 +3,13 @@
     "allow": [
       "Bash(mkdir:*)",
       "Bash(node:*)",
-      "Bash(chmod:*)"
+      "Bash(chmod:*)",
+      "Bash(dotnet build:*)",
+      "Bash(dotnet run)",
+      "Bash(dotnet restore:*)",
+      "Bash(dotnet clean:*)",
+      "Bash(dotnet test:*)",
+      "Bash(\"c:\\Users\\ct_kl\\CSharp_Work\\C_SharpWork\\SampleTestGeneration\\Delegates\\Delegates.Tests\\test-results.txt\")"
     ],
     "deny": [],
     "ask": []

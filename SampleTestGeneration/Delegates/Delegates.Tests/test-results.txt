@@ -1,0 +1,64 @@
+  Determining projects to restore...
+  All projects are up-to-date for restore.
+  Delegates -> c:\Users\ct_kl\CSharp_Work\C_SharpWork\SampleTestGeneration\Delegates\bin\Debug\net7.0\Delegates.dll
+  Delegates.Tests -> c:\Users\ct_kl\CSharp_Work\C_SharpWork\SampleTestGeneration\Delegates\Delegates.Tests\bin\Debug\net7.0\Delegates.Tests.dll
+Test run for c:\Users\ct_kl\CSharp_Work\C_SharpWork\SampleTestGeneration\Delegates\Delegates.Tests\bin\Debug\net7.0\Delegates.Tests.dll (.NETCoreApp,Version=v7.0)
+Microsoft (R) Test Execution Command Line Tool Version 17.4.1 (x64)
+Copyright (c) Microsoft Corporation.  All rights reserved.
+
+Starting test execution, please wait...
+A total of 1 test files matched the specified pattern.
+c:\Users\ct_kl\CSharp_Work\C_SharpWork\SampleTestGeneration\Delegates\Delegates.Tests\bin\Debug\net7.0\Delegates.Tests.dll
+[xUnit.net 00:00:00.00] xUnit.net VSTest Adapter v2.4.5+1caef2f33e (64-bit .NET 7.0.20)
+[xUnit.net 00:00:00.28]   Discovering: Delegates.Tests
+[xUnit.net 00:00:00.30]   Discovered:  Delegates.Tests
+[xUnit.net 00:00:00.31]   Starting:    Delegates.Tests
+  Passed Delegates.Tests.PhotoTests.Load_WithNullPath_ReturnsPhotoInstance [1 ms]
+  Passed Delegates.Tests.PhotoTests.Load_WithValidPath_ReturnsPhotoInstance [< 1 ms]
+  Passed Delegates.Tests.PhotoTests.Photo_CreatedByLoad_IsNewInstance [< 1 ms]
+  Passed Delegates.Tests.PhotoTests.Save_OnMultiplePhotos_DoesNotThrowException [< 1 ms]
+  Passed Delegates.Tests.PhotoTests.Load_WithDifferentExtensions_ReturnsPhotoInstance [< 1 ms]
+  Passed Delegates.Tests.PhotoTests.Save_OnPhotoInstance_DoesNotThrowException [< 1 ms]
+  Passed Delegates.Tests.PhotoTests.Load_WithEmptyPath_ReturnsPhotoInstance [< 1 ms]
+  Passed Delegates.Tests.DelegateChainTests.DelegateChain_WithSingleDelegate_ExecutesOnce [1 ms]
+  Passed Delegates.Tests.DelegateChainTests.DelegateChain_AddedUsingPlusEqualsOperator_ExecutesAllDelegates [10 ms]
+  Passed Delegates.Tests.DelegateChainTests.DelegateChain_CombineMultipleChainsWithPlusOperator_ExecutesAllDelegates [< 1 ms]
+  Passed Delegates.Tests.DelegateChainTests.DelegateChain_RemoveDelegate_ExecutesRemainingDelegates [< 1 ms]
+  Passed Delegates.Tests.DelegateChainTests.DelegateChain_EmptyChainAfterRemovingAllDelegates_IsNull [< 1 ms]
+  Passed Delegates.Tests.DelegateChainTests.DelegateChain_AddSameMethodTwice_ExecutesBothTimes [< 1 ms]
+  Passed Delegates.Tests.DelegateChainTests.DelegateChain_WithMixedInstanceAndStaticMethods_ExecutesAll [< 1 ms]
+  Passed Delegates.Tests.DelegateChainTests.DelegateChain_WithThreeFilters_ExecutesInCorrectOrder [< 1 ms]
+  Passed Delegates.Tests.DelegateChainTests.DelegateChain_AddedUsingPlusOperator_ExecutesAllDelegates [< 1 ms]
+  Passed Delegates.Tests.DelegateChainTests.DelegateChain_WithLambdaExpressions_ExecutesAllInChain [< 1 ms]
+  Passed Delegates.Tests.IntegrationTests.FullWorkflow_ProcessingMultiplePhotos_EachPhotoProcessedIndependently [< 1 ms]
+  Passed Delegates.Tests.IntegrationTests.FullWorkflow_DynamicallyBuildFilterChain_ExecutesAllFilters [< 1 ms]
+  Passed Delegates.Tests.IntegrationTests.FullWorkflow_CreateAndUseMultipleProcessors_AllWorkIndependently [< 1 ms]
+  Passed Delegates.Tests.IntegrationTests.FullWorkflow_SimulatingProgramMain_ExecutesCorrectly [< 1 ms]
+  Passed Delegates.Tests.IntegrationTests.FullWorkflow_WithDifferentFilterCombination_ExecutesCorrectly [< 1 ms]
+  Passed Delegates.Tests.IntegrationTests.FullWorkflow_WithAllAvailableFilters_ExecutesAll [< 1 ms]
+  Passed Delegates.Tests.IntegrationTests.FullWorkflow_WithCustomFiltersOnly_ExecutesWithoutBuiltInFilters [< 1 ms]
+  Passed Delegates.Tests.PhotoFiltersTests.Resize_WithValidPhoto_WritesToConsole [< 1 ms]
+  Passed Delegates.Tests.PhotoFiltersTests.Resize_WithNullPhoto_DoesNotThrowException [< 1 ms]
+  Passed Delegates.Tests.PhotoFiltersTests.ApplyBrightness_WithNullPhoto_DoesNotThrowException [< 1 ms]
+  Passed Delegates.Tests.PhotoFiltersTests.PhotoFilters_CanBeInstantiatedMultipleTimes [< 1 ms]
+  Passed Delegates.Tests.PhotoFiltersTests.ApplyMultipleFilters_InSequence_AllExecuteSuccessfully [< 1 ms]
+  Passed Delegates.Tests.PhotoFiltersTests.ApplyBrightness_WithValidPhoto_WritesToConsole [< 1 ms]
+  Passed Delegates.Tests.PhotoFiltersTests.ApplyBrightness_CalledMultipleTimes_WritesCorrectOutput [< 1 ms]
+  Passed Delegates.Tests.PhotoFiltersTests.ApplyContrast_WithNullPhoto_DoesNotThrowException [< 1 ms]
+  Passed Delegates.Tests.PhotoFiltersTests.ApplyContrast_WithValidPhoto_WritesToConsole [< 1 ms]
+  Passed Delegates.Tests.PhotoProcessorTests.Process_WithNullPath_ExecutesSuccessfully [< 1 ms]
+  Passed Delegates.Tests.PhotoProcessorTests.Process_WithSingleFilter_ExecutesFilterOnce [< 1 ms]
+  Passed Delegates.Tests.PhotoProcessorTests.Process_WithMixedFilterTypes_ExecutesAll [< 1 ms]
+[xUnit.net 00:00:00.39]   Finished:    Delegates.Tests
+  Passed Delegates.Tests.PhotoProcessorTests.Process_WithMultipleFilters_ExecutesAllFiltersInOrder [< 1 ms]
+  Passed Delegates.Tests.PhotoProcessorTests.Process_WithLambdaExpression_ExecutesLambda [< 1 ms]
+  Passed Delegates.Tests.PhotoProcessorTests.Process_CalledMultipleTimes_ProcessesEachRequest [< 1 ms]
+  Passed Delegates.Tests.PhotoProcessorTests.Process_WithChainedDelegates_ExecutesAllDelegates [< 1 ms]
+  Passed Delegates.Tests.PhotoProcessorTests.Process_LoadsAndSavesPhoto [< 1 ms]
+  Passed Delegates.Tests.PhotoProcessorTests.Process_WithCustomDelegate_ExecutesCustomAction [< 1 ms]
+  Passed Delegates.Tests.PhotoProcessorTests.Process_WithEmptyPath_ExecutesSuccessfully [< 1 ms]
+
+Test Run Successful.
+Total tests: 43
+     Passed: 43
+ Total time: 0.7795 Seconds
