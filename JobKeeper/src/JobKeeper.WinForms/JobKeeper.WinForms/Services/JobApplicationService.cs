@@ -11,11 +11,20 @@ public class JobApplicationService
     private readonly string _dataFilePath;
     private List<JobApplication> _applications;
 
-    public JobApplicationService()
+    public JobApplicationService(string? customDataPath = null)
     {
-        // Store data in user's AppData folder
-        string appDataPath = Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData);
-        string appFolder = Path.Combine(appDataPath, "JobKeeper");
+        // Store data in user's AppData folder or use custom path for testing
+        string appFolder;
+
+        if (!string.IsNullOrEmpty(customDataPath))
+        {
+            appFolder = customDataPath;
+        }
+        else
+        {
+            string appDataPath = Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData);
+            appFolder = Path.Combine(appDataPath, "JobKeeper");
+        }
 
         if (!Directory.Exists(appFolder))
         {
