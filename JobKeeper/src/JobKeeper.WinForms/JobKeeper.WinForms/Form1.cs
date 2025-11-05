@@ -1,3 +1,4 @@
+using System.ComponentModel;
 using JobKeeper.WinForms.Models;
 using JobKeeper.WinForms.Services;
 using JobKeeper.WinForms.Utilities;
@@ -10,14 +11,18 @@ namespace JobKeeper.WinForms;
 public partial class Form1 : Form
 {
     private readonly JobApplicationService _service;
+    private readonly BindingSource _bindingSource;
     private JobApplication? _currentEditingApplication;
     private DateTime? _filterStartDate;
     private DateTime? _filterEndDate;
+    private string _currentSortColumn = "";
+    private SortOrder _currentSortOrder = SortOrder.None;
 
     public Form1()
     {
         InitializeComponent();
         _service = new JobApplicationService();
+        _bindingSource = new BindingSource();
         InitializeStatusComboBox();
         InitializeDataGridView();
         InitializeDateFilters();
@@ -29,9 +34,94 @@ public partial class Form1 : Form
         // Hook up the CellPainting event for custom status rendering
         dgvApplications.CellPainting += DgvApplications_CellPainting;
 
+        // Hook up the ColumnHeaderMouseClick event for manual sorting
+        dgvApplications.ColumnHeaderMouseClick += DgvApplications_ColumnHeaderMouseClick;
+
         // Enable sorting on all columns
         dgvApplications.AutoGenerateColumns = true;
         dgvApplications.AllowUserToOrderColumns = true;
+    }
+
+    private void DgvApplications_ColumnHeaderMouseClick(object? sender, DataGridViewCellMouseEventArgs e)
+    {
+        if (e.ColumnIndex < 0 || dgvApplications.Columns[e.ColumnIndex].Name == "Id")
+            return;
+
+        var columnName = dgvApplications.Columns[e.ColumnIndex].Name;
+
+        // Determine sort order
+        if (_currentSortColumn == columnName)
+        {
+            // Toggle sort order
+            _currentSortOrder = _currentSortOrder == SortOrder.Ascending ? SortOrder.Descending : SortOrder.Ascending;
+        }
+        else
+        {
+            // New column, default to ascending
+            _currentSortColumn = columnName;
+            _currentSortOrder = SortOrder.Ascending;
+        }
+
+        // Perform the sort
+        SortApplications(columnName, _currentSortOrder);
+
+        // Update column header to show sort direction
+        foreach (DataGridViewColumn column in dgvApplications.Columns)
+        {
+            column.HeaderCell.SortGlyphDirection = SortOrder.None;
+        }
+        dgvApplications.Columns[e.ColumnIndex].HeaderCell.SortGlyphDirection = _currentSortOrder;
+    }
+
+    private void SortApplications(string columnName, SortOrder sortOrder)
+    {
+        if (_bindingSource.DataSource is not BindingList<JobApplication> bindingList)
+            return;
+
+        var sortedList = sortOrder == SortOrder.Ascending
+            ? SortListAscending(bindingList.ToList(), columnName)
+            : SortListDescending(bindingList.ToList(), columnName);
+
+        // Clear and repopulate the binding list
+        bindingList.Clear();
+        foreach (var item in sortedList)
+        {
+            bindingList.Add(item);
+        }
+    }
+
+    private List<JobApplication> SortListAscending(List<JobApplication> list, string propertyName)
+    {
+        return propertyName switch
+        {
+            "Company" => list.OrderBy(x => x.Company).ToList(),
+            "Website" => list.OrderBy(x => x.Website).ToList(),
+            "JobTitle" => list.OrderBy(x => x.JobTitle).ToList(),
+            "Submitted" => list.OrderBy(x => x.Submitted).ToList(),
+            "Resume" => list.OrderBy(x => x.Resume).ToList(),
+            "CoverLetter" => list.OrderBy(x => x.CoverLetter).ToList(),
+            "Status" => list.OrderBy(x => x.Status).ToList(),
+            "Interview1" => list.OrderBy(x => x.Interview1).ToList(),
+            "Interview2" => list.OrderBy(x => x.Interview2).ToList(),
+            _ => list
+        };
+    }
+
+    private List<JobApplication> SortListDescending(List<JobApplication> list, string propertyName)
+    {
+        return propertyName switch
+        {
+            "Company" => list.OrderByDescending(x => x.Company).ToList(),
+            "Website" => list.OrderByDescending(x => x.Website).ToList(),
+            "JobTitle" => list.OrderByDescending(x => x.JobTitle).ToList(),
+            "Submitted" => list.OrderByDescending(x => x.Submitted).ToList(),
+            "Resume" => list.OrderByDescending(x => x.Resume).ToList(),
+            "CoverLetter" => list.OrderByDescending(x => x.CoverLetter).ToList(),
+            "Status" => list.OrderByDescending(x => x.Status).ToList(),
+            "Interview1" => list.OrderByDescending(x => x.Interview1).ToList(),
+            "Interview2" => list.OrderByDescending(x => x.Interview2).ToList(),
+            _ => list
+        };
     }
 
     private void InitializeDateFilters()
@@ -174,8 +264,9 @@ public partial class Form1 : Form
             }).ToList();
         }
 
-        dgvApplications.DataSource = null;
-        dgvApplications.DataSource = applications;
+        // Use BindingList for proper sorting support
+        _bindingSource.DataSource = new BindingList<JobApplication>(applications);
+        dgvApplications.DataSource = _bindingSource;
 
         // Customize grid appearance
         if (dgvApplications.Columns.Count > 0 && dgvApplications.Columns.Contains("Status"))
@@ -433,6 +524,79 @@ public partial class Form1 : Form
     {
         var aboutForm = new Forms.AboutForm();
         aboutForm.ShowDialog();
+    }
+
+    private void importToolStripMenuItem_Click(object sender, EventArgs e)
+    {
+        using var dialog = new OpenFileDialog
+        {
+            Filter = "OpenOffice Spreadsheet (*.ods)|*.ods|All Files (*.*)|*.*",
+            Title = "Import Job Applications from ODS File"
+        };
+
+        if (dialog.ShowDialog() == DialogResult.OK)
+        {
+            try
+            {
+                var importService = new Services.OdsImportService();
+                var importedApplications = importService.ImportFromOds(dialog.FileName);
+
+                if (importedApplications.Count == 0)
+                {
+                    MessageBox.Show("No valid job applications found in the ODS file.", "Import Complete",
+                        MessageBoxButtons.OK, MessageBoxIcon.Information);
+                    return;
+                }
+
+                // Ask user if they want to append or replace
+                var result = MessageBox.Show(
+                    $"Found {importedApplications.Count} job application(s) in the file.\n\n" +
+                    "Click 'Yes' to ADD these to your existing applications.\n" +
+                    "Click 'No' to REPLACE all existing applications.\n" +
+                    "Click 'Cancel' to abort the import.",
+                    "Import Mode",
+                    MessageBoxButtons.YesNoCancel,
+                    MessageBoxIcon.Question);
+
+                if (result == DialogResult.Cancel)
+                    return;
+
+                if (result == DialogResult.No)
+                {
+                    // Replace - clear existing
+                    var existing = _service.GetAll();
+                    foreach (var app in existing)
+                    {
+                        _service.Delete(app.Id);
+                    }
+                }
+
+                // Add imported applications
+                int addedCount = 0;
+                foreach (var app in importedApplications)
+                {
+                    _service.Add(app);
+                    addedCount++;
+                }
+
+                _service.SaveData();
+                LoadApplications();
+
+                MessageBox.Show(
+                    $"Successfully imported {addedCount} job application(s)!",
+                    "Import Successful",
+                    MessageBoxButtons.OK,
+                    MessageBoxIcon.Information);
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show(
+                    $"Error importing ODS file:\n\n{ex.Message}",
+                    "Import Error",
+                    MessageBoxButtons.OK,
+                    MessageBoxIcon.Error);
+            }
+        }
     }
 
     private bool ValidateInputs()

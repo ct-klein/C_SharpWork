@@ -86,12 +86,21 @@ partial class Form1
         //
         // fileToolStripMenuItem
         //
+        this.importToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
         this.fileToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.importToolStripMenuItem,
             this.saveToolStripMenuItem,
             this.printToolStripMenuItem});
         this.fileToolStripMenuItem.Name = "fileToolStripMenuItem";
         this.fileToolStripMenuItem.Size = new System.Drawing.Size(37, 20);
         this.fileToolStripMenuItem.Text = "File";
+        //
+        // importToolStripMenuItem
+        //
+        this.importToolStripMenuItem.Name = "importToolStripMenuItem";
+        this.importToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+        this.importToolStripMenuItem.Text = "Import from ODS...";
+        this.importToolStripMenuItem.Click += new System.EventHandler(this.importToolStripMenuItem_Click);
         //
         // saveToolStripMenuItem
         //
@@ -503,6 +512,7 @@ partial class Form1
 
     private MenuStrip menuStrip1;
     private ToolStripMenuItem fileToolStripMenuItem;
+    private ToolStripMenuItem importToolStripMenuItem;
     private ToolStripMenuItem saveToolStripMenuItem;
     private ToolStripMenuItem printToolStripMenuItem;
     private ToolStripMenuItem aboutToolStripMenuItem;
