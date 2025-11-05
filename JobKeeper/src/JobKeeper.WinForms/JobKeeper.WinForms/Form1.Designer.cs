@@ -34,6 +34,13 @@ partial class Form1
         this.printToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
         this.aboutToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
         this.groupBox1 = new System.Windows.Forms.GroupBox();
+        this.groupBox2 = new System.Windows.Forms.GroupBox();
+        this.dtpFilterStart = new System.Windows.Forms.DateTimePicker();
+        this.dtpFilterEnd = new System.Windows.Forms.DateTimePicker();
+        this.btnApplyFilter = new System.Windows.Forms.Button();
+        this.btnClearFilter = new System.Windows.Forms.Button();
+        this.label2 = new System.Windows.Forms.Label();
+        this.label12 = new System.Windows.Forms.Label();
         this.btnBrowseCoverLetter = new System.Windows.Forms.Button();
         this.btnBrowseResume = new System.Windows.Forms.Button();
         this.dtpInterview2 = new System.Windows.Forms.DateTimePicker();
@@ -62,6 +69,7 @@ partial class Form1
         this.label1 = new System.Windows.Forms.Label();
         this.menuStrip1.SuspendLayout();
         this.groupBox1.SuspendLayout();
+        this.groupBox2.SuspendLayout();
         ((System.ComponentModel.ISupportInitialize)(this.dgvApplications)).BeginInit();
         this.SuspendLayout();
         //
@@ -377,6 +385,81 @@ partial class Form1
         this.dgvApplications.TabIndex = 6;
         this.dgvApplications.CellDoubleClick += new System.Windows.Forms.DataGridViewCellEventHandler(this.dgvApplications_CellDoubleClick);
         //
+        // groupBox2
+        //
+        this.groupBox2.Controls.Add(this.label12);
+        this.groupBox2.Controls.Add(this.label2);
+        this.groupBox2.Controls.Add(this.btnClearFilter);
+        this.groupBox2.Controls.Add(this.btnApplyFilter);
+        this.groupBox2.Controls.Add(this.dtpFilterEnd);
+        this.groupBox2.Controls.Add(this.dtpFilterStart);
+        this.groupBox2.Location = new System.Drawing.Point(440, 250);
+        this.groupBox2.Name = "groupBox2";
+        this.groupBox2.Size = new System.Drawing.Size(748, 60);
+        this.groupBox2.TabIndex = 8;
+        this.groupBox2.TabStop = false;
+        this.groupBox2.Text = "Filter by Submitted Date";
+        //
+        // dtpFilterStart
+        //
+        this.dtpFilterStart.Checked = false;
+        this.dtpFilterStart.CustomFormat = "MM/dd/yyyy";
+        this.dtpFilterStart.Format = System.Windows.Forms.DateTimePickerFormat.Custom;
+        this.dtpFilterStart.Location = new System.Drawing.Point(70, 25);
+        this.dtpFilterStart.Name = "dtpFilterStart";
+        this.dtpFilterStart.ShowCheckBox = true;
+        this.dtpFilterStart.Size = new System.Drawing.Size(150, 23);
+        this.dtpFilterStart.TabIndex = 0;
+        //
+        // dtpFilterEnd
+        //
+        this.dtpFilterEnd.Checked = false;
+        this.dtpFilterEnd.CustomFormat = "MM/dd/yyyy";
+        this.dtpFilterEnd.Format = System.Windows.Forms.DateTimePickerFormat.Custom;
+        this.dtpFilterEnd.Location = new System.Drawing.Point(310, 25);
+        this.dtpFilterEnd.Name = "dtpFilterEnd";
+        this.dtpFilterEnd.ShowCheckBox = true;
+        this.dtpFilterEnd.Size = new System.Drawing.Size(150, 23);
+        this.dtpFilterEnd.TabIndex = 1;
+        //
+        // btnApplyFilter
+        //
+        this.btnApplyFilter.Location = new System.Drawing.Point(480, 23);
+        this.btnApplyFilter.Name = "btnApplyFilter";
+        this.btnApplyFilter.Size = new System.Drawing.Size(120, 27);
+        this.btnApplyFilter.TabIndex = 2;
+        this.btnApplyFilter.Text = "Apply Filter";
+        this.btnApplyFilter.UseVisualStyleBackColor = true;
+        this.btnApplyFilter.Click += new System.EventHandler(this.btnApplyFilter_Click);
+        //
+        // btnClearFilter
+        //
+        this.btnClearFilter.Location = new System.Drawing.Point(610, 23);
+        this.btnClearFilter.Name = "btnClearFilter";
+        this.btnClearFilter.Size = new System.Drawing.Size(120, 27);
+        this.btnClearFilter.TabIndex = 3;
+        this.btnClearFilter.Text = "Clear Filter";
+        this.btnClearFilter.UseVisualStyleBackColor = true;
+        this.btnClearFilter.Click += new System.EventHandler(this.btnClearFilter_Click);
+        //
+        // label2
+        //
+        this.label2.AutoSize = true;
+        this.label2.Location = new System.Drawing.Point(15, 28);
+        this.label2.Name = "label2";
+        this.label2.Size = new System.Drawing.Size(38, 15);
+        this.label2.TabIndex = 4;
+        this.label2.Text = "From:";
+        //
+        // label12
+        //
+        this.label12.AutoSize = true;
+        this.label12.Location = new System.Drawing.Point(240, 28);
+        this.label12.Name = "label12";
+        this.label12.Size = new System.Drawing.Size(22, 15);
+        this.label12.TabIndex = 5;
+        this.label12.Text = "To:";
+        //
         // label1
         //
         this.label1.AutoSize = true;
@@ -392,6 +475,7 @@ partial class Form1
         this.AutoScaleDimensions = new System.Drawing.SizeF(7F, 15F);
         this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
         this.ClientSize = new System.Drawing.Size(1200, 632);
+        this.Controls.Add(this.groupBox2);
         this.Controls.Add(this.label1);
         this.Controls.Add(this.dgvApplications);
         this.Controls.Add(this.btnClear);
@@ -408,6 +492,8 @@ partial class Form1
         this.menuStrip1.PerformLayout();
         this.groupBox1.ResumeLayout(false);
         this.groupBox1.PerformLayout();
+        this.groupBox2.ResumeLayout(false);
+        this.groupBox2.PerformLayout();
         ((System.ComponentModel.ISupportInitialize)(this.dgvApplications)).EndInit();
         this.ResumeLayout(false);
         this.PerformLayout();
@@ -447,4 +533,11 @@ partial class Form1
     private Button btnClear;
     private DataGridView dgvApplications;
     private Label label1;
+    private GroupBox groupBox2;
+    private DateTimePicker dtpFilterStart;
+    private DateTimePicker dtpFilterEnd;
+    private Button btnApplyFilter;
+    private Button btnClearFilter;
+    private Label label2;
+    private Label label12;
 }

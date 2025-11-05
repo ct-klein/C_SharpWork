@@ -11,6 +11,8 @@ public partial class Form1 : Form
 {
     private readonly JobApplicationService _service;
     private JobApplication? _currentEditingApplication;
+    private DateTime? _filterStartDate;
+    private DateTime? _filterEndDate;
 
     public Form1()
     {
@@ -18,6 +20,7 @@ public partial class Form1 : Form
         _service = new JobApplicationService();
         InitializeStatusComboBox();
         InitializeDataGridView();
+        InitializeDateFilters();
         LoadApplications();
     }
 
@@ -25,6 +28,33 @@ public partial class Form1 : Form
     {
         // Hook up the CellPainting event for custom status rendering
         dgvApplications.CellPainting += DgvApplications_CellPainting;
+
+        // Enable sorting on all columns
+        dgvApplications.AutoGenerateColumns = true;
+        dgvApplications.AllowUserToOrderColumns = true;
+    }
+
+    private void InitializeDateFilters()
+    {
+        // Set up date filter checkboxes
+        dtpFilterStart.Checked = false;
+        dtpFilterEnd.Checked = false;
+    }
+
+    private void btnApplyFilter_Click(object sender, EventArgs e)
+    {
+        _filterStartDate = dtpFilterStart.Checked ? dtpFilterStart.Value.Date : null;
+        _filterEndDate = dtpFilterEnd.Checked ? dtpFilterEnd.Value.Date : null;
+        LoadApplications();
+    }
+
+    private void btnClearFilter_Click(object sender, EventArgs e)
+    {
+        dtpFilterStart.Checked = false;
+        dtpFilterEnd.Checked = false;
+        _filterStartDate = null;
+        _filterEndDate = null;
+        LoadApplications();
     }
 
     private void DgvApplications_CellPainting(object? sender, DataGridViewCellPaintingEventArgs e)
@@ -126,6 +156,24 @@ public partial class Form1 : Form
         // Auto-update GHOSTED status for applications submitted more than 2 weeks ago
         UpdateGhostedStatus(applications);
 
+        // Apply date range filter if set
+        if (_filterStartDate.HasValue || _filterEndDate.HasValue)
+        {
+            applications = applications.Where(app =>
+            {
+                if (!app.Submitted.HasValue)
+                    return false;
+
+                if (_filterStartDate.HasValue && app.Submitted.Value.Date < _filterStartDate.Value)
+                    return false;
+
+                if (_filterEndDate.HasValue && app.Submitted.Value.Date > _filterEndDate.Value)
+                    return false;
+
+                return true;
+            }).ToList();
+        }
+
         dgvApplications.DataSource = null;
         dgvApplications.DataSource = applications;
 
@@ -133,20 +181,38 @@ public partial class Form1 : Form
         if (dgvApplications.Columns.Count > 0 && dgvApplications.Columns.Contains("Status"))
         {
             dgvApplications.Columns["Id"].Visible = false;
+
+            // Set column headers and enable sorting
             dgvApplications.Columns["Company"].HeaderText = "COMPANY";
+            dgvApplications.Columns["Company"].SortMode = DataGridViewColumnSortMode.Automatic;
+
             dgvApplications.Columns["Website"].HeaderText = "WEBSITE";
+            dgvApplications.Columns["Website"].SortMode = DataGridViewColumnSortMode.Automatic;
+
             dgvApplications.Columns["JobTitle"].HeaderText = "JOB TITLE";
+            dgvApplications.Columns["JobTitle"].SortMode = DataGridViewColumnSortMode.Automatic;
+
             dgvApplications.Columns["Submitted"].HeaderText = "SUBMITTED";
+            dgvApplications.Columns["Submitted"].SortMode = DataGridViewColumnSortMode.Automatic;
+
             dgvApplications.Columns["Resume"].HeaderText = "RESUME";
+            dgvApplications.Columns["Resume"].SortMode = DataGridViewColumnSortMode.Automatic;
+
             dgvApplications.Columns["CoverLetter"].HeaderText = "COVER";
+            dgvApplications.Columns["CoverLetter"].SortMode = DataGridViewColumnSortMode.Automatic;
+
             dgvApplications.Columns["Status"].HeaderText = "STATUS";
+            dgvApplications.Columns["Status"].SortMode = DataGridViewColumnSortMode.Automatic;
 
             // Set fixed width for Status column to accommodate icon + text
             dgvApplications.Columns["Status"].AutoSizeMode = DataGridViewAutoSizeColumnMode.None;
             dgvApplications.Columns["Status"].Width = 180;
 
             dgvApplications.Columns["Interview1"].HeaderText = "INTERVIEW 1";
+            dgvApplications.Columns["Interview1"].SortMode = DataGridViewColumnSortMode.Automatic;
+
             dgvApplications.Columns["Interview2"].HeaderText = "INTERVIEW 2";
+            dgvApplications.Columns["Interview2"].SortMode = DataGridViewColumnSortMode.Automatic;
         }
 
         // Increase row height to better display icons
